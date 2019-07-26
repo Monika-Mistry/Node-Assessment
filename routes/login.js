@@ -16,7 +16,7 @@ router.post("/addUser", (req, res) => {
     if (!isValid) {
         return res.status(404).send(errors);
     }
-    
+
     const newUser = new Login({
         username: req.body.username,
         email: req.body.email,
