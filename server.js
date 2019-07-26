@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const login = require("./routes/login");
+const item = require("./routes/item");
 
 const app = express();
 
@@ -19,6 +20,7 @@ mongoose.connect('mongodb://localhost:27017/assessment',
 
 //routes
 app.use("/login", login);
+app.use("/item", item);
 
 //port communication
 const port = process.env.PORT || 5000;
