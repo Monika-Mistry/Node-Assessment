@@ -65,10 +65,10 @@ router.post("/addUser", (req, res) => {
 router.get("/login", (req, res) => {
     const errors = {};
 
-    const search = { email: req.body.email };
+    const search = { username: req.body.username };
     Login.findOne(search).then(user => {
         if (!user) {
-            errors.noUser = "There is no user with this email: " + req.body.email;
+            errors.noUser = "There is no user with this username: " + req.body.username;
             res.status(404).json(errors);
         }
 
@@ -102,7 +102,7 @@ router.get("/getUser", (req, res) => {
 
 // @route PUT login/updateUser
 // @desc Update a users' details
-// @access Public
+// @access Private
 router.put("/updateUser", (req, res) => {
     const errors = {};
 
@@ -124,7 +124,7 @@ router.put("/updateUser", (req, res) => {
 
 // @route DELETE login/deleteUser
 // @desc Remove a user with a given email
-// @access Public
+// @access Private
 router.delete("/deleteUser", (req, res) => {
     const errors = {};
     Login.deleteOne(req.body)
