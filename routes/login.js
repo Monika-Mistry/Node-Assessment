@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const Login = require("../models/loginModel");
+const validateLoginInput = require("../validation/loginValidation");
 
 let success = { success: true };
 
@@ -10,6 +11,12 @@ let success = { success: true };
 // @desc Create new user login
 // @access Public
 router.post("/addUser", (req, res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    if (!isValid) {
+        return res.status(404).send(errors);
+    }
+    
     const newUser = new Login({
         username: req.body.username,
         email: req.body.email,
