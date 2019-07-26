@@ -8,6 +8,7 @@ function validateLoginInput(data) {
     //if the values are not present (null or undefined), change to empty strings
     data.email = !isEmpty(data.email) ? data.email : "";
     data.password = !isEmpty(data.password) ? data.password : "";
+    data.password2 = !isEmpty(data.password2) ? data.password2 : "";
     data.username = !isEmpty(data.username) ? data.username : "";
 
     //login validation rules
@@ -31,10 +32,13 @@ function validateLoginInput(data) {
     }
 
     //password
+    if (!validator.equals(data.password2, data.password)) {
+        errors.password = "Passwords do not match"
+    }
+
     if (!validator.isLength(data.password, { min: 6, max: 20 })) {
         errors.password = "Password length incorrect. Must be between 8 and 20 characters."
     }
-
 
     if (validator.isEmpty(data.password)) {
         errors.password = "Password field is required";
