@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
@@ -23,7 +24,16 @@ router.post("/addUser", (req, res) => {
         password: req.body.password
     });
 
-    newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) {
+                res.status(404).send(err)
+            } else {
+                newUser.password = hash;
+                newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+            }
+        })
+    });
 
 });
 
