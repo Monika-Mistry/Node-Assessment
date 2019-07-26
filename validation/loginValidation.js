@@ -4,7 +4,6 @@ const isEmpty = require("./isEmpty");
 
 function validateLoginInput(data) {
     const errors = {};
-    console.log(data);
 
     //if the values are not present (null or undefined), change to empty strings
     data.email = !isEmpty(data.email) ? data.email : "";
@@ -12,7 +11,6 @@ function validateLoginInput(data) {
     data.username = !isEmpty(data.username) ? data.username : "";
 
     //login validation rules
-    console.log(data);
     //email
     if (!validator.isEmail(data.email)) {
         errors.email = "Email invalid. Enter a correct email";

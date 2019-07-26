@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
@@ -23,16 +24,46 @@ router.post("/addUser", (req, res) => {
         password: req.body.password
     });
 
-    newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) {
+                res.status(404).send(err)
+            } else {
+                newUser.password = hash;
+                newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+            }
+        })
+    });
 
 });
 
 // @route GET login/login
 // @desc User 'login' to account with valid credentials
 // @access Public
-// router.get("/login", (req, res) => {
+router.get("/login", (req, res) => {
+    const errors = {};
 
-// });
+    const search = { email: req.body.email };
+    Login.findOne(search).then(user => {
+        if (!user) {
+            errors.noUser = "There is no user with this email: " + req.body.email;
+            res.status(404).json(errors);
+        }
+
+        bcrypt
+            .compare(req.body.password, user.password)
+            .then(isMatch => {
+                if (isMatch) {
+                    res.send(success);
+                } else {
+                    errors.password = "Incorrect password"
+                    res.status(404).send(errors);
+                }
+
+            }).catch(err => res.status(404).send(err));
+    }).catch(err => res.status(404).send(err));
+
+});
 
 // @route GET login/getUser
 // @desc Get a user with a given email
