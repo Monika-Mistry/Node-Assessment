@@ -12,10 +12,10 @@ let success = { success: true };
 // @desc Create new user login
 // @access Public
 router.post("/addUser", (req, res) => {
-    const { errors, isValid } = validateLoginInput(req.body);
+    const validate = validateLoginInput(req.body);
 
-    if (!isValid) {
-        return res.status(404).send(errors);
+    if (!validate.isValid) {
+        return res.status(404).send(validate.errors);
     }
 
     const newUser = new Login({
@@ -24,16 +24,38 @@ router.post("/addUser", (req, res) => {
         password: req.body.password
     });
 
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) {
-                res.status(404).send(err)
+    const emailSearch = { email: req.body.email };
+    const userSearch = { username: req.body.username };
+
+    const errors = {};
+    Login.findOne(emailSearch)
+        .then(user => {
+            if (!user) {
+                Login.findOne(userSearch).then(user => {
+                    if (!user) {
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(newUser.password, salt, (err, hash) => {
+                                if (err) {
+                                    res.status(404).send(err)
+                                } else {
+                                    newUser.password = hash;
+                                    newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+                                }
+                            })
+                        });
+                    } else {
+                        errors.username = "Username already exists";
+                        res.status(404).send(errors);
+                    }
+
+                }).catch(err => res.status(404).send(err));
             } else {
-                newUser.password = hash;
-                newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+                errors.email = "Email already exists";
+                res.status(404).send(errors);
             }
-        })
-    });
+        }).catch(err => res.status(404).send(err));
+
+
 
 });
 
@@ -50,8 +72,7 @@ router.get("/login", (req, res) => {
             res.status(404).json(errors);
         }
 
-        bcrypt
-            .compare(req.body.password, user.password)
+        bcrypt.compare(req.body.password, user.password)
             .then(isMatch => {
                 if (isMatch) {
                     res.send(success);
@@ -59,7 +80,6 @@ router.get("/login", (req, res) => {
                     errors.password = "Incorrect password"
                     res.status(404).send(errors);
                 }
-
             }).catch(err => res.status(404).send(err));
     }).catch(err => res.status(404).send(err));
 
@@ -98,8 +118,7 @@ router.put("/updateUser", (req, res) => {
                 errors.noUpdate = "The user has not been updated";
                 res.status(404).json(errors);
             }
-        })
-        .catch(err => res.status(404).send(err));
+        }).catch(err => res.status(404).send(err));
 
 });
 
@@ -116,8 +135,7 @@ router.delete("/deleteUser", (req, res) => {
                 errors.noDelete = "The user has not been deleted";
                 res.status(404).json(errors);
             }
-        })
-        .catch(err => res.status(404).send(err));
+        }).catch(err => res.status(404).send(err));
 
 });
 
