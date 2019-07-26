@@ -4,12 +4,21 @@ const router = express.Router();
 
 const Login = require("../models/loginModel");
 
+let success = { success: true };
+
 // @route POST login/addUser
 // @desc Create new user login
 // @access Public
-// router.post("/addUser", (req, res) => {
+router.post("/addUser", (req, res) => {
+    const newUser = new Login({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    });
 
-// });
+    newUser.save().then(() => res.send(success)).catch(err => res.status(404).send(err));
+
+});
 
 // @route GET login/login
 // @desc User 'login' to account with valid credentials
@@ -23,16 +32,15 @@ const Login = require("../models/loginModel");
 // @access Public
 router.get("/getUser", (req, res) => {
     const errors = {};
-    Login.findOne(req.body, '-password').then(user => {
-        
-        if(!user){
-            errors.noUser = "There is no user with this email: " + req.body.email;
-            res.status(404).json(errors);
-        }
-
-        res.send(user);
-
-    }).catch(err => res.status(404).send(err));
+    Login.findOne(req.body, '-password -__v')
+        .then(user => {
+            if (!user) {
+                errors.noUser = "There is no user with this email: " + req.body.email;
+                res.status(404).json(errors);
+            }
+            res.send(user);
+        })
+        .catch(err => res.status(404).send(err));
 
 });
 
