@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Monika-Mistry/Node-Assessment/issues"
   },
-  "homepage": "https://github.com/Monika-Mistry/Node-Assessment#readme"
+  "homepage": "https://github.com/Monika-Mistry/Node-Assessment#readme",
+  "dependencies": {
+    "eslint": "^6.1.0",
+    "mongoose": "^5.6.6"
+  }
 }
