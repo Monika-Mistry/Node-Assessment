@@ -40,9 +40,30 @@ router.post("/addUser", (req, res) => {
 // @route GET login/login
 // @desc User 'login' to account with valid credentials
 // @access Public
-// router.get("/login", (req, res) => {
+router.get("/login", (req, res) => {
+    const errors = {};
 
-// });
+    const search = { email: req.body.email };
+    Login.findOne(search).then(user => {
+        if (!user) {
+            errors.noUser = "There is no user with this email: " + req.body.email;
+            res.status(404).json(errors);
+        }
+
+        bcrypt
+            .compare(req.body.password, user.password)
+            .then(isMatch => {
+                if (isMatch) {
+                    res.send(success);
+                } else {
+                    errors.password = "Incorrect password"
+                    res.status(404).send(errors);
+                }
+
+            }).catch(err => res.status(404).send(err));
+    }).catch(err => res.status(404).send(err));
+
+});
 
 // @route GET login/getUser
 // @desc Get a user with a given email
