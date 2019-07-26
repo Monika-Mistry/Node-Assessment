@@ -38,8 +38,21 @@ router.get("/getItems", (req, res) => {
 // @desc Update an item
 // @access Public
 
-// @route DELETE item/deleteItem
+// @route DELETE item/deleteItems
 // @desc Delete items with specified username
 // @access Public
+router.delete("/deleteItems", (req, res) => {
+    const errors = {};
+
+    Item.find(req.body).then(items => {
+        if (!items || items.length < 1) {
+            errors.noItems = "There are no items with this username: " + req.body.username;
+            res.status(404).send(errors);
+        } else {
+            Item.deleteMany(req.body).then(() => res.send(success)).catch(err => res.status(404).send(err));
+        }
+    }).catch(err => res.status(404).send(err));
+
+});
 
 module.exports = router;
