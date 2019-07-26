@@ -54,8 +54,19 @@ router.get("/getUser", (req, res) => {
 // @route DELETE login/deleteUser
 // @desc Remove a user with a given email
 // @access Public
-// router.post("/deleteUser", (req, res) => {
+router.delete("/deleteUser", (req, res) => {
+    const errors = {};
+    Login.deleteOne(req.body)
+    .then(user => {
+        if (user.ok === 1) {
+            res.send(success);
+        } else {
+            errors.notDeleted = "The user has not been deleted";
+            res.status(404).json(errors);
+        }
+    })
+    .catch(err => res.status(404).send(err));
 
-// });
+});
 
 module.exports = router;
