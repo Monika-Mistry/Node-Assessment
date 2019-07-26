@@ -1,10 +1,11 @@
 version: '3.7'
 services:
     mongo:
-        image: mongo
+        image: mongo:latest
         ports:
             - {target: 27017, published: 27017, protocol: tcp}
     server:
+        image: mpmistry/discussion-board:latest
         build:
             context: .
             dockerfile: Dockerfile
