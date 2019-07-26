@@ -37,6 +37,30 @@ router.get("/getItems", (req, res) => {
 // @route PUT item/updateItem
 // @desc Update an item
 // @access Public
+router.put("/updateItem", (req, res) => {
+    const errors = {};
+
+    const search = { _id: req.body._id };
+    const update = { content: req.body.content };
+
+
+    Item.find(search).then(items => {
+        if (!items || items.length < 1) {
+            errors.noItems = "There are no items with this id: " + req.body._id;
+            res.status(404).send(errors);
+        } else {
+            Item.updateOne(search, update).then(item => {
+                if (item.nModified === 1 && item.n === 1) {
+                    res.send(success);
+                }
+                else {
+                    errors.noUpdate = "Item has not been updated"
+                }
+            }).catch(err => res.status(404).send(err));
+        }
+    }).catch(err => res.status(404).send(err));
+
+});
 
 // @route DELETE item/deleteItems
 // @desc Delete items with specified username
@@ -50,6 +74,23 @@ router.delete("/deleteItems", (req, res) => {
             res.status(404).send(errors);
         } else {
             Item.deleteMany(req.body).then(() => res.send(success)).catch(err => res.status(404).send(err));
+        }
+    }).catch(err => res.status(404).send(err));
+
+});
+
+// @route DELETE item/delete
+// @desc Delete item by id
+// @access Public
+router.delete("/delete", (req, res) => {
+    const errors = {};
+
+    Item.find(req.body).then(items => {
+        if (!items || items.length < 1) {
+            errors.noItems = "There are no items with this id: " + req.body._id;
+            res.status(404).send(errors);
+        } else {
+            Item.deleteOne(req.body).then(() => res.send(success)).catch(err => res.status(404).send(err));
         }
     }).catch(err => res.status(404).send(err));
 
