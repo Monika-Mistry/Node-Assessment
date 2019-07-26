@@ -77,9 +77,7 @@ router.get("/getUser", (req, res) => {
                 res.status(404).json(errors);
             }
             res.send(user);
-        })
-        .catch(err => res.status(404).send(err));
-
+        }).catch(err => res.status(404).send(err));
 });
 
 // @route PUT login/updateUser
