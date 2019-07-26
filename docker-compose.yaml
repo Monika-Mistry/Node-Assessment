@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+    mongo:
+        image: mongo
+        ports:
+            - {target: 27017, published: 27017, protocol: tcp}
+    server:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - {target: 5000, published: 5000, protocol: tcp}
