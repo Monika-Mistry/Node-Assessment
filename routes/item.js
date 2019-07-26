@@ -8,9 +8,20 @@ const Item = require("../models/itemModel");
 // @desc Add an item
 // @access Public
 
-// @route GET item/username
+// @route GET item/getItems
 // @desc Get items with specified username
 // @access Public
+router.get("/getItems", (req, res) => {
+    const errors = {};
+    Item.find(req.body).then(items => {
+        if (!items || items.length < 1) {
+            errors.noItems = "There are no items with this username: " + req.body.username;
+            res.status(404).send(errors);
+        } else {
+            res.send(items);
+        }
+    }).catch(err => res.status(404).send(err));
+});
 
 // @route PUT item/updateItem
 // @desc Update an item
