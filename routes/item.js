@@ -4,12 +4,19 @@ const router = express.Router();
 
 const Item = require("../models/itemModel");
 const userLogin = require("../validation/userLogin");
+const validateItemInput = require("../validation/itemValidation");
 
 const success = { success: true };
 // @route POST item/addItem
 // @desc Add an item
 // @access Public
 router.post("/addItem", (req, res) => {
+    const { errors, isValid } = validateItemInput(req.body);
+    if (!isValid) {
+        res.status(404).send(errors);
+
+    }
+
     userLogin(req.body).then(() => {
         const newItem = new Item({
             username: req.body.username,
