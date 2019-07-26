@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 
 const Login = require("../models/loginModel");
-const isEmpty = require("../validation/isEmpty");
+const isEmpty = require("./isEmpty");
 
 const success = { success: true };
 

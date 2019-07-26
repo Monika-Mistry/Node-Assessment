@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const Item = require("../models/itemModel");
-const userLogin = require("../util/userLogin");
+const userLogin = require("../validation/userLogin");
 
 const success = { success: true };
 // @route POST item/addItem
